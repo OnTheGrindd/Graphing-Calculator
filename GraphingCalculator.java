@@ -20,18 +20,18 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	
 	JFrame      CalcWindow        = new JFrame();
 	JTextArea   AnswerArea        = new JTextArea();
-
 	JTextArea   QuestionArea      = new JTextArea();
 	JTextField  AnswerField     = new JTextField();
 	JTextField  XField          = new JTextField();
 	JTextField  QuestionField     = new JTextField();
 	JScrollPane LeftScrollPane    = new JScrollPane(QuestionArea);
 	//JScrollPane RightScrollPane = new JScrollPane(AnswerArea); 
+	
 
 	JPanel CalcPanel = new JPanel();
 	JPanel labelPanel = new JPanel();
 	JLabel QuestionLabel  = new JLabel("     Equation to be solved    ");
-	JLabel XLabel  = new JLabel("     X =    ");
+	JLabel XLabel  = new JLabel("     X   =    ");
 	JPanel bottomPanel = new JPanel();
 	JButton RecallButton= new JButton("RECALL");
 	JButton EnterButton = new JButton("ENTER");
@@ -731,6 +731,12 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void NewGraph () implement MouseListener{
+
+		JFrame graphWindow			= new JFrame();		//window to pop up after hitting enter
+		JFrame.setTitle("(expression)");		//title must be the expression graphed.
 	}
 
 
