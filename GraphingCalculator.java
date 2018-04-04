@@ -734,9 +734,21 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	}
 	
 	public void NewGraph () implement MouseListener{
-
-		JFrame graphWindow			= new JFrame();		//window to pop up after hitting enter
-		JFrame.setTitle("(expression)");		//title must be the expression graphed.
+		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
+		JPanel graphPanel			= new JPanel();
+		Graphics g;
+		
+		graphWindow.setLocation(500,0); 									// x,y
+		graphWindow.setSize(500, 200);  									// width, height 
+		g = graphPanel.getGraphics();
+		JFrame.setTitle(QuestionField.getText());			//title must be the expression graphed.
+		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
+		
+		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
+		graphWindow.setVisible(true); 
+		
+		
+		
 	}
 
 
