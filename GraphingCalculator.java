@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,9 +90,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
         ClearButton.setBackground(Color.yellow);
         //AnswerArea.setFont(new Font(Font.BOLD));
             
-        // load custom graph panel
-       	 Graphics g = graphPanel.getGraphics();
-       	 graphPanel.paint(g);
+        
              
 	}
 
@@ -124,6 +121,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		
 		return result;
 	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -169,7 +167,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	}
 	
 	// gets x and corresponding y values for given expression and returns values in 2x2 array
-	public double[][] getValues(double result, String xIn, String xInc) throws Exception {
+	public double[][] getValues(String xIn, String xInc) throws Exception {
 		double increment = Double.parseDouble(xInc);
 		double xVal = Double.parseDouble(xIn);
 		double vals[][] = new double[10][10];
