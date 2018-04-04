@@ -20,7 +20,6 @@ import javax.swing.text.Utilities;
 public class GraphingCalculator implements Calculator, ActionListener, KeyListener {
 	
 	JFrame      CalcWindow        = new JFrame();
-	JFrame		graphWindow  	  = new JFrame();
 	JTextArea   AnswerArea        = new JTextArea();
 	JTextArea   QuestionArea      = new JTextArea();
 	JTextField  AnswerField     = new JTextField();
@@ -49,7 +48,6 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        CalcWindow.getContentPane().add(CalcPanel, "Center");
        CalcPanel.add(LeftScrollPane);
        LeftScrollPane.setPreferredSize( new Dimension( 700, 300));
-       RefreshGraphPanel graphPanel = new RefreshGraphPanel(this, QuestionField.getText(), new double[0], new double[0]);
        CalcWindow.getContentPane().add(bottomPanel, "South");
        bottomPanel.setLayout(new GridLayout(1,4));
        bottomPanel.add(EnterButton);
@@ -76,9 +74,6 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        ClearButton.addActionListener(this);
        QuestionField.addKeyListener(this);
        
-       graphWindow.setLocation(800, 400);
-       graphWindow.setSize(200, 200);
-       graphWindow.getContentPane().add(graphPanel, "Center");
            
        
        	CalcWindow.setLocation(100,100); // x,y
@@ -91,9 +86,6 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
         ClearButton.setBackground(Color.yellow);
         //AnswerArea.setFont(new Font(Font.BOLD));
             
-        // load custom graph panel
-       	 Graphics g = graphPanel.getGraphics();
-       	 graphPanel.paint(g);
              
 	}
 
@@ -169,7 +161,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	}
 	
 	// gets x and corresponding y values for given expression and returns values in 2x2 array
-	public double[][] getValues(double result, String xIn, String xInc) throws Exception {
+	public double[][] getValues(String xIn, String xInc) throws Exception {
 		double increment = Double.parseDouble(xInc);
 		double xVal = Double.parseDouble(xIn);
 		double vals[][] = new double[10][10];
@@ -753,7 +745,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		
 	}
 	
-	public void NewGraph () implement MouseListener{
+	public void NewGraph () {
 		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
 		JPanel graphPanel			= new JPanel();
 		Graphics g;
@@ -761,7 +753,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		graphWindow.setLocation(500,0); 									// x,y
 		graphWindow.setSize(500, 200);  									// width, height 
 		g = graphPanel.getGraphics();
-		JFrame.setTitle(QuestionField.getText());			//title must be the expression graphed.
+		graphWindow.setTitle(QuestionField.getText());			//title must be the expression graphed.
 		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
 		
 		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
