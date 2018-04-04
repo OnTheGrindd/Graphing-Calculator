@@ -22,18 +22,18 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	JFrame      CalcWindow        = new JFrame();
 	JFrame		graphWindow  	  = new JFrame();
 	JTextArea   AnswerArea        = new JTextArea();
-
 	JTextArea   QuestionArea      = new JTextArea();
 	JTextField  AnswerField     = new JTextField();
 	JTextField  XField          = new JTextField();
 	JTextField  QuestionField     = new JTextField();
 	JScrollPane LeftScrollPane    = new JScrollPane(QuestionArea);
 	//JScrollPane RightScrollPane = new JScrollPane(AnswerArea); 
+	
 
 	JPanel CalcPanel = new JPanel();
 	JPanel labelPanel = new JPanel();
 	JLabel QuestionLabel  = new JLabel("     Equation to be solved    ");
-	JLabel XLabel  = new JLabel("     X =    ");
+	JLabel XLabel  = new JLabel("     X   =    ");
 	JPanel bottomPanel = new JPanel();
 	JButton RecallButton= new JButton("RECALL");
 	JButton EnterButton = new JButton("ENTER");
@@ -750,6 +750,24 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void NewGraph () implement MouseListener{
+		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
+		JPanel graphPanel			= new JPanel();
+		Graphics g;
+		
+		graphWindow.setLocation(500,0); 									// x,y
+		graphWindow.setSize(500, 200);  									// width, height 
+		g = graphPanel.getGraphics();
+		JFrame.setTitle(QuestionField.getText());			//title must be the expression graphed.
+		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
+		
+		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
+		graphWindow.setVisible(true); 
+		
+		
 		
 	}
 
