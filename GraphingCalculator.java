@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +20,7 @@ import javax.swing.text.Utilities;
 public class GraphingCalculator implements Calculator, ActionListener, KeyListener {
 	
 	JFrame      CalcWindow        = new JFrame();
+	JFrame		graphWindow  	  = new JFrame();
 	JTextArea   AnswerArea        = new JTextArea();
 
 	JTextArea   QuestionArea      = new JTextArea();
@@ -42,50 +44,56 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	public char symbols[] = {'e', 'p', 'x', 'u'};
 	
 	public GraphingCalculator() throws Exception {
-		// TODO Auto-generated constructor stub
-		System.out.println("RUNNING EXPRESSION CALCULATOR");
-        CalcWindow.getContentPane().add(CalcPanel, "Center");
-           CalcPanel.add(LeftScrollPane);
-           LeftScrollPane.setPreferredSize( new Dimension( 700, 300));
-        
-           CalcWindow.getContentPane().add(bottomPanel, "South");
-           bottomPanel.setLayout(new GridLayout(1,4));
-           bottomPanel.add(EnterButton);
-           bottomPanel.add(RecallButton);
-           bottomPanel.add(ClearButton);
-           bottomPanel.add(ERRORsField);
-           ERRORsField.setBackground(Color.pink);
-           ERRORsField.setEditable(false);
-           
-           CalcWindow.getContentPane().add(labelPanel, "North");
-           labelPanel.setLayout(new GridLayout(2,3)); // 1 row, 2 cols
-           labelPanel.add(QuestionLabel);
-           labelPanel.add(QuestionField);    
-           labelPanel.add(XLabel);
-           labelPanel.add(XField);
+	   // TODO Auto-generated constructor stub
+	   System.out.println("RUNNING EXPRESSION CALCULATOR");
+       CalcWindow.getContentPane().add(CalcPanel, "Center");
+       CalcPanel.add(LeftScrollPane);
+       LeftScrollPane.setPreferredSize( new Dimension( 700, 300));
+       RefreshGraphPanel graphPanel = new RefreshGraphPanel(this, QuestionField.getText(), new double[0], new double[0]);
+       CalcWindow.getContentPane().add(bottomPanel, "South");
+       bottomPanel.setLayout(new GridLayout(1,4));
+       bottomPanel.add(EnterButton);
+       bottomPanel.add(RecallButton);
+       bottomPanel.add(ClearButton);
+       bottomPanel.add(ERRORsField);
+       ERRORsField.setBackground(Color.pink);
+       ERRORsField.setEditable(false);
+       
+       CalcWindow.getContentPane().add(labelPanel, "North");
+       labelPanel.setLayout(new GridLayout(2,3)); // 1 row, 2 cols
+       labelPanel.add(QuestionLabel);
+       labelPanel.add(QuestionField);    
+       labelPanel.add(XLabel);
+       labelPanel.add(XField);
 
-           CalcWindow.setTitle("EX: CACLULATOR"); // show chatName in title bar
-           //AnswerArea.setEditable(false);
-           QuestionArea.setEditable(false);
-           //UNCOMMENT THESE SO YOU CAN CALL THE ACTION LISTENER
+       CalcWindow.setTitle("EX: CACLULATOR"); // show chatName in title bar
+       //AnswerArea.setEditable(false);
+       QuestionArea.setEditable(false);
+       //UNCOMMENT THESE SO YOU CAN CALL THE ACTION LISTENER
 
-           RecallButton.addActionListener(this);
-           EnterButton.addActionListener(this);
-           ClearButton.addActionListener(this);
-           QuestionField.addKeyListener(this);
-               
+       RecallButton.addActionListener(this);
+       EnterButton.addActionListener(this);
+       ClearButton.addActionListener(this);
+       QuestionField.addKeyListener(this);
+       
+       graphWindow.setLocation(800, 400);
+       graphWindow.setSize(200, 200);
+       graphWindow.getContentPane().add(graphPanel, "Center");
            
-           	CalcWindow.setLocation(100,100); // x,y
-           	CalcWindow.setSize(700, 400);  // width, height
-           	CalcWindow.setVisible(true);   // show it
-           	CalcWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // terminate if user closes window	
-            //SplitPanel.setDividerLocation(225);
-            CalcWindow.setBackground(Color.cyan);
-            EnterButton.setBackground(Color.yellow);
-            ClearButton.setBackground(Color.yellow);
-            //AnswerArea.setFont(new Font(Font.BOLD));
+       
+       	CalcWindow.setLocation(100,100); // x,y
+       	CalcWindow.setSize(700, 400);  // width, height
+       	CalcWindow.setVisible(true);   // show it
+       	CalcWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // terminate if user closes window	
+        //SplitPanel setDividerLocation(225);
+        CalcWindow.setBackground(Color.cyan);
+        EnterButton.setBackground(Color.yellow);
+        ClearButton.setBackground(Color.yellow);
+        //AnswerArea.setFont(new Font(Font.BOLD));
             
-
+        // load custom graph panel
+       	 Graphics g = graphPanel.getGraphics();
+       	 graphPanel.paint(g);
              
 	}
 
@@ -106,7 +114,6 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		ArrayList <String> parsedExpression = stringParser(expression);
 		size = parsedExpression.size();
 		String[] a = new String[size];
-		System.out.println("Array a of size " + size);
 		
 		// fill string type with parsed expression
 		for(int k = 0; k < size; k++){a[k] = parsedExpression.get(k).substring(0);}
@@ -157,10 +164,23 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
-			
 		}
 		
+	}
+	
+	// gets x and corresponding y values for given expression and returns values in 2x2 array
+	public double[][] getValues(double result, String xIn, String xInc) throws Exception {
+		double increment = Double.parseDouble(xInc);
+		double xVal = Double.parseDouble(xIn);
+		double vals[][] = new double[10][10];
+		int index = 0;
+			
+		for(int i = (int) xVal; i <= (int)(xVal + 10*increment); i += increment){
+			vals[0][index] = i;
+			vals[1][index] = calculate(QuestionField.getText(), String.valueOf(i));
+			index++;
+		}
+		return vals;
 	}
 	
 	public ArrayList<String> stringParser(String expression) throws Exception {
