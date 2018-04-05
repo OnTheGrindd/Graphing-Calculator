@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -13,29 +14,36 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	GraphingCalculator calculator;
 	String expr;
-	double[] xComponents;
-	double[] yComponents;
+	String[] xComponents;
+	String[] yComponents;
 	
 	public RefreshGraphPanel(GraphingCalculator gc, String expression, double[] xValues, double[] yValues) throws IllegalArgumentException {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
-		String[] xscl = new String[10];
-		String[] yscl = new String[10];
+		Graphics gr = this.getGraphics();
 		expr = expression;
-		yComponents = yValues;
-		xComponents = xValues;
 		this.addMouseListener(this);
 		
-		// convert xvalues to string
+		// get x print scale values
+		System.out.print("X values: ");
 		for(int j = 0; j < 10; j++){
-			xscl[j] = Double.toString(xValues[j]);
+			xComponents[j] = Double.toString(xValues[j]);
+			System.out.print(xComponents[j] + " ");
 		}
+		
+	
 		int index = 0;
+		// get y scale 
 		double yscale = yScale(min(yValues), max(yValues));
+		System.out.print('\n' + "y values: ");
+		// get y print scale values
 		for(int m = (int)(min(yValues)); m <= (int)(max(yValues)); m += yscale){
-			yscl[index] = Double.toString(m);
+			yComponents[index] = Double.toString(m);
+			System.out.print(yComponents[index] + " ");
 			index++;
 		}
+		
+		paint(gr);
 		
 	}
 	
@@ -43,8 +51,15 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	public void paint(Graphics g) { // overrides paint() in JPanel 
 		int windowWidth = getWidth();
 		int windowHeight = getHeight();
+		int xmargin = 50;
+		double ymargin = 20;
+		double xPixelInterval = (windowWidth - 2*xmargin)/(10-1);
+		double yPixelInterval = (windowHeight - 2*ymargin)/(10-1);
+		double xValueToPixelConversionFactor = xPixelInterval/(Double.parseDouble(xComponents[1]) - Double.parseDouble(xComponents[0]));
+		double yValueToPixelConversionFactor = yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
 		System.out.println("Current graph size is " + windowWidth + " x " + windowHeight);
-		// paint the graph
+		
+		
 	}
 	
 	public double yScale(double yMin, double yMax){

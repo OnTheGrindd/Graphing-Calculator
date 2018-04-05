@@ -20,10 +20,10 @@ import javax.swing.text.Utilities;
 public class GraphingCalculator implements Calculator, ActionListener, KeyListener {
 	
 	JFrame      CalcWindow        = new JFrame();
-	JFrame		graphWindow  	  = new JFrame();
 	JTextArea   AnswerArea        = new JTextArea();
 	JTextArea   QuestionArea      = new JTextArea();
 	JTextField  AnswerField     = new JTextField();
+	JTextField  xIncField		= new JTextField();
 	JTextField  XField          = new JTextField();
 	JTextField  QuestionField     = new JTextField();
 	JScrollPane LeftScrollPane    = new JScrollPane(QuestionArea);
@@ -34,6 +34,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	JPanel labelPanel = new JPanel();
 	JLabel QuestionLabel  = new JLabel("     Equation to be solved    ");
 	JLabel XLabel  = new JLabel("     X   =    ");
+	JLabel xIncLabel = new JLabel("X Scale: ");
 	JPanel bottomPanel = new JPanel();
 	JButton RecallButton= new JButton("RECALL");
 	JButton EnterButton = new JButton("ENTER");
@@ -47,9 +48,12 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	   // TODO Auto-generated constructor stub
 	   System.out.println("RUNNING EXPRESSION CALCULATOR");
        CalcWindow.getContentPane().add(CalcPanel, "Center");
+       xIncField.setPreferredSize(new Dimension(80, 20));
+       CalcPanel.add(xIncLabel);
+       CalcPanel.add(xIncField);
+       CalcPanel.add(LeftScrollPane);
        CalcPanel.add(LeftScrollPane);
        LeftScrollPane.setPreferredSize( new Dimension( 700, 300));
-       RefreshGraphPanel graphPanel = new RefreshGraphPanel(this, QuestionField.getText(), new double[0], new double[0]);
        CalcWindow.getContentPane().add(bottomPanel, "South");
        bottomPanel.setLayout(new GridLayout(1,4));
        bottomPanel.add(EnterButton);
@@ -65,6 +69,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        labelPanel.add(QuestionField);    
        labelPanel.add(XLabel);
        labelPanel.add(XField);
+     
 
        CalcWindow.setTitle("EX: CACLULATOR"); // show chatName in title bar
        //AnswerArea.setEditable(false);
@@ -75,22 +80,18 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        EnterButton.addActionListener(this);
        ClearButton.addActionListener(this);
        QuestionField.addKeyListener(this);
-       
-       graphWindow.setLocation(800, 400);
-       graphWindow.setSize(200, 200);
-       graphWindow.getContentPane().add(graphPanel, "Center");
            
        
        	CalcWindow.setLocation(100,100); // x,y
        	CalcWindow.setSize(700, 400);  // width, height
-       	CalcWindow.setVisible(true);   // show it
+       	
        	CalcWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // terminate if user closes window	
         //SplitPanel setDividerLocation(225);
         CalcWindow.setBackground(Color.cyan);
         EnterButton.setBackground(Color.yellow);
         ClearButton.setBackground(Color.yellow);
         //AnswerArea.setFont(new Font(Font.BOLD));
-             
+        CalcWindow.setVisible(true);   // show it
 	}
 
 	public static void main(String[] args) {
@@ -133,6 +134,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 				QuestionArea.append(QuestionField.getText() + " = " + Double.toString(solution));
 				QuestionArea.append(System.lineSeparator());
 				QuestionArea.setCaretPosition(QuestionArea.getDocument().getLength());
+				if(xIncField.getText().length() > 0) NewGraph();
 			} catch (Exception s) {
 				ERRORsField.setText(s.getMessage());
 				ERRORsField.setBackground(Color.pink);
@@ -173,7 +175,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		double vals[][] = new double[10][10];
 		int index = 0;
 			
-		for(int i = (int) xVal; i <= (int)(xVal + 10*increment); i += increment){
+		for(int i = (int) xVal; i < (int)(xVal + 10*increment); i += increment){
 			vals[0][index] = i;
 			vals[1][index] = calculate(QuestionField.getText(), String.valueOf(i));
 			index++;
@@ -521,7 +523,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
             expression = PEMDAS(expression);
         }
         // otherwise return a string of length 1
-        for(int k =0;k<expression.length;k++)System.out.print(expression[k]+" ");
+        
         return expression;
 	}
 
@@ -668,10 +670,9 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
                 indexOfA[j] -= 2;
             }
         }
-        for(int k =0;k<topMost.length;k++)System.out.print(topMost[k]+" ");
-        System.out.print("End");
+        //for(int k =0;k<topMost.length;k++)System.out.print(topMost[k]+" ");
         String[] out = topMost;
-        for(int k =0;k<out.length;k++)System.out.print(out[k]+" ");
+        //for(int k =0;k<out.length;k++)System.out.print(out[k]+" ");
         return out[0];
 	}
 
@@ -751,7 +752,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		
 	}
 	
-	public void NewGraph (){
+	public void NewGraph () throws IllegalArgumentException, Exception{
 		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
 		JPanel graphPanel			= new JPanel();
 		Graphics g;
@@ -761,11 +762,10 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		g = graphPanel.getGraphics();
 		graphWindow.setTitle(QuestionField.getText());			//title must be the expression graphed.
 		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
-		
 		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
 		graphWindow.setVisible(true); 
 		
-		
+		new RefreshGraphPanel(this, QuestionField.getText(), getValues(XField.getText(), xIncField.getText())[0], getValues(XField.getText(), xIncField.getText())[1]);
 		
 	}
 
