@@ -108,7 +108,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	public double calculate(String expression, String x) throws Exception {
 		// TODO Auto-generated method stub
 		int size;
-		ArrayList <String> parsedExpression = stringParser(expression);
+		ArrayList <String> parsedExpression = stringParser(expression, x);
 		size = parsedExpression.size();
 		String[] a = new String[size];
 		
@@ -170,12 +170,13 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	// gets x and corresponding y values for given expression and returns values in 2x2 array
 
 	public double[][] getValues(String xIn, String xInc) throws Exception {
-		double increment = Double.parseDouble(xInc);
-		double xVal = Double.parseDouble(xIn);
+		double increment = Double.parseDouble(xInc.trim());
+		double xVal = Double.parseDouble(xIn.trim());
 		double vals[][] = new double[10][10];
 		int index = 0;
+
 			
-		for(int i = (int) xVal; i < (int)(xVal + 10*increment); i += increment){
+		for(double i = xVal; i < (xVal + 10*increment); i += increment){
 			vals[0][index] = i;
 			vals[1][index] = calculate(QuestionField.getText(), String.valueOf(i));
 			index++;
@@ -183,9 +184,9 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		return vals;
 	}
 	
-	public ArrayList<String> stringParser(String expression) throws Exception {
+	public ArrayList<String> stringParser(String expression, String x) throws Exception {
 		String userInput = QuestionField.getText().trim();
-		String xInput = XField.getText().trim();
+		String xInput = x.trim();
 		
 		if(userInput.isEmpty()) throw new IllegalArgumentException("No expression provided.");
 		
@@ -756,7 +757,6 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
 		JPanel graphPanel			= new JPanel();
 		Graphics g;
-		
 		graphWindow.setLocation(500,0); 									// x,y
 		graphWindow.setSize(500, 200);  									// width, height 
 		g = graphPanel.getGraphics();

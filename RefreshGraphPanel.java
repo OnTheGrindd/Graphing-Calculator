@@ -14,14 +14,16 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	GraphingCalculator calculator;
 	String expr;
-	String[] xComponents;
-	String[] yComponents;
+	String[] xComponents = new String[10];
+	String[] yComponents = new String[10];
 	
 	public RefreshGraphPanel(GraphingCalculator gc, String expression, double[] xValues, double[] yValues) throws IllegalArgumentException {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
 		Graphics gr = this.getGraphics();
 		expr = expression;
+		double yMin = min(yValues);
+		double yMax = max(yValues);
 		this.addMouseListener(this);
 		
 		// get x print scale values
@@ -34,10 +36,11 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	
 		int index = 0;
 		// get y scale 
-		double yscale = yScale(min(yValues), max(yValues));
-		System.out.print('\n' + "y values: ");
+		double yscale = yScale(yMin, yMax);
+		System.out.print('\n' +"Max: " + yMax + "y values: ");
+		
 		// get y print scale values
-		for(int m = (int)(min(yValues)); m <= (int)(max(yValues)); m += yscale){
+		for(double m = yMin; m <= yMax; m += yscale){
 			yComponents[index] = Double.toString(m);
 			System.out.print(yComponents[index] + " ");
 			index++;
@@ -56,7 +59,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		double xPixelInterval = (windowWidth - 2*xmargin)/(10-1);
 		double yPixelInterval = (windowHeight - 2*ymargin)/(10-1);
 		double xValueToPixelConversionFactor = xPixelInterval/(Double.parseDouble(xComponents[1]) - Double.parseDouble(xComponents[0]));
-		double yValueToPixelConversionFactor = yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
+		double yValueToPixelConversionFactor = windowHeight - yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
 		System.out.println("Current graph size is " + windowWidth + " x " + windowHeight);
 		
 		
