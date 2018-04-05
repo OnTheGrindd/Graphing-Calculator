@@ -15,7 +15,9 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	GraphingCalculator calculator;
 	String expr;
 	String[] xComponents = new String[10];
-	String[] yComponents = new String[10];
+	String[] yComponents;
+	int windowWidth;
+	int windowHeight;
 	
 	public RefreshGraphPanel(GraphingCalculator gc, String expression, double[] xValues, double[] yValues) throws IllegalArgumentException {
 		// TODO Auto-generated constructor stub
@@ -36,8 +38,12 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	
 		int index = 0;
 		// get y scale 
-		double yscale = yScale(yMin, yMax);
-		System.out.print('\n' +"Max: " + yMax + "y values: ");
+		double yscale = yScale(yMin, yMax)[0]/(yScale(yMin, yMax)[1]-1);
+		yComponents = new String[(int) yScale(yMin, yMax)[1]];
+		System.out.println("yMin: " + yMin);
+		System.out.println("yMax: " + yMax);
+		System.out.println("Scale: " +yscale);
+		System.out.print('\n' + "y values: ");
 		
 		// get y print scale values
 		for(double m = yMin; m <= yMax; m += yscale){
@@ -46,26 +52,24 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 			index++;
 		}
 		
-		paint(gr);
-		
 	}
 	
 	@Override
 	public void paint(Graphics g) { // overrides paint() in JPanel 
-		int windowWidth = getWidth();
-		int windowHeight = getHeight();
+		windowHeight = getHeight();
+		windowWidth = getWidth();
 		int xmargin = 50;
 		double ymargin = 20;
 		double xPixelInterval = (windowWidth - 2*xmargin)/(10-1);
 		double yPixelInterval = (windowHeight - 2*ymargin)/(10-1);
 		double xValueToPixelConversionFactor = xPixelInterval/(Double.parseDouble(xComponents[1]) - Double.parseDouble(xComponents[0]));
 		double yValueToPixelConversionFactor = windowHeight - yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
-		System.out.println("Current graph size is " + windowWidth + " x " + windowHeight);
+		System.out.println('\n' + "Current graph size is " + windowWidth + " x " + windowHeight);
 		
 		
 	}
 	
-	public double yScale(double yMin, double yMax){
+	public double[] yScale(double yMin, double yMax){
 		double dPlotRange;
 		  int    plotRange, initialIncrement, upperIncrement, 
 		         lowerIncrement, selectedIncrement, numberOfYscaleValues,
@@ -85,8 +89,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		     }
 		  else
 		     {
-			 System.out.println("Add handling of small plot range!");
-			 return 0;
+			 throw new IllegalArgumentException("Add handling of small plot range!");
 		     }
 		/*ASSUME*/ // 10 scale values as a starting assumption.
 		  initialIncrement = plotRange/10;
@@ -142,8 +145,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		  System.out.println("The number of Y scale click marks will be " + numberOfYscaleValues);
 		  if ((numberOfYscaleValues < 5) || (numberOfYscaleValues > 20))
 		     {
-			 System.out.println("Number of Y scale click marks is too few or too many!");
-			 return 0;
+			 throw new IllegalArgumentException("Number of Y scale click marks is too few or too many!");
 		     }
 		  
 		  // 7) Determine if Y scale will be extended to include the 0 point.
@@ -169,7 +171,8 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 			   yScaleValue += selectedIncrement;
 		       }
 		  System.out.println(yScaleValue);
-		  return yScaleValue;
+		  double retVal[] = {yScaleValue, numberOfYscaleValues};
+		  return retVal;
 	}      
 	
 	

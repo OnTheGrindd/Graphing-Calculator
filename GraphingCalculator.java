@@ -755,17 +755,16 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	
 	public void NewGraph () throws IllegalArgumentException, Exception{
 		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
-		JPanel graphPanel			= new JPanel();
-		Graphics g;
+		
 		graphWindow.setLocation(500,0); 									// x,y
 		graphWindow.setSize(500, 200);  									// width, height 
-		g = graphPanel.getGraphics();
 		graphWindow.setTitle(QuestionField.getText());			//title must be the expression graphed.
 		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
+		RefreshGraphPanel graphPanel = new RefreshGraphPanel(this, QuestionField.getText(), getValues(XField.getText(), xIncField.getText())[0], getValues(XField.getText(), xIncField.getText())[1]);		
 		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
 		graphWindow.setVisible(true); 
 		
-		new RefreshGraphPanel(this, QuestionField.getText(), getValues(XField.getText(), xIncField.getText())[0], getValues(XField.getText(), xIncField.getText())[1]);
+		
 		
 	}
 
