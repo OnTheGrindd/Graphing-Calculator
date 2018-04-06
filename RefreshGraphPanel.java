@@ -64,20 +64,36 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		System.out.println('\n' + "Current graph size is " + windowWidth + " x " + windowHeight);
 		
 		// get x-pixel values
-		int[][] xTickPix = getPixelVals(xPixelInterval, xComponents, windowWidth/2);
-		int[][] yTickPix = getPixelVals(yPixelInterval, yComponents, windowHeight/2);
+		int[][] xTickPix = getxPixelVals(xPixelInterval, xComponents);
+		int[][] yTickPix = getyPixelVals(yPixelInterval, yComponents);
 		
 	}
 	
-	public int[][] getPixelVals(double interval, String[] values, int reference) {
+	public int[][] getxPixelVals(double interval, String[] values) {
 		int index = 0;
 		int pixels[][] = new int[2][values.length];
 		for(int i = 0; i < values.length*interval; i+= interval){
-			pixels[0][index] = (int)(interval*i+reference);
+			if(Double.parseDouble(values[index]) >= 0) pixels[1][index] = (int)(interval*i+windowWidth/2); 
+			else pixels[1][index] = (int)(windowWidth/2 - interval*i);
+			pixels[0][index] = windowHeight/2;
 			index++;
 		}
 		return pixels;
 	}
+	
+	public int[][] getyPixelVals(double interval, String[] values) {
+		int index = 0;
+		int pixels[][] = new int[2][values.length];
+		for(int i = 0; i < values.length*interval; i+= interval){
+			if(Double.parseDouble(values[index]) >= 0) pixels[1][index] = (int)(interval*i-windowHeight/2); 
+			else pixels[1][index] = (int)(windowHeight/2 + interval*i);
+			pixels[0][index] = windowWidth/2;
+			index++;
+		}
+		return pixels;
+	}
+	
+	//public double[][] plotPoints(int[] )
 	
 	public double[] yScale(double yMin, double yMax){
 		double dPlotRange;
