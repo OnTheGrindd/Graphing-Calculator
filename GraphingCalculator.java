@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,6 +79,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        EnterButton.addActionListener(this);
        ClearButton.addActionListener(this);
        QuestionField.addKeyListener(this);
+
            
        
        	CalcWindow.setLocation(100,100); // x,y
@@ -91,7 +91,9 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
         EnterButton.setBackground(Color.yellow);
         ClearButton.setBackground(Color.yellow);
         //AnswerArea.setFont(new Font(Font.BOLD));
+
         CalcWindow.setVisible(true);   // show it
+
 	}
 
 	public static void main(String[] args) {
@@ -169,9 +171,11 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	
 	// gets x and corresponding y values for given expression and returns values in 2x2 array
 
+
 	public double[][] getValues(String xIn, String xInc) throws Exception {
 		double increment = Double.parseDouble(xInc.trim());
 		double xVal = Double.parseDouble(xIn.trim());
+
 		double vals[][] = new double[10][10];
 		int index = 0;
 
@@ -752,8 +756,9 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public void NewGraph () throws IllegalArgumentException, Exception{
+
+	public void NewGraph () throws IllegalArgumentException, Exception {
+
 		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
 		
 		graphWindow.setLocation(500,0); 									// x,y
