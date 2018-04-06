@@ -24,6 +24,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	JTextArea   QuestionArea      = new JTextArea();
 	JTextField  AnswerField     = new JTextField();
 	JTextField  XField          = new JTextField();
+	JTextField  IncXField		= new JTextField();
 	JTextField  QuestionField     = new JTextField();
 	JScrollPane LeftScrollPane    = new JScrollPane(QuestionArea);
 	//JScrollPane RightScrollPane = new JScrollPane(AnswerArea); 
@@ -33,6 +34,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 	JPanel labelPanel = new JPanel();
 	JLabel QuestionLabel  = new JLabel("     Equation to be solved    ");
 	JLabel XLabel  = new JLabel("     X   =    ");
+	JLabel IncXLabel = new JLabel(" with X increments of ");
 	JPanel bottomPanel = new JPanel();
 	JButton RecallButton= new JButton("RECALL");
 	JButton EnterButton = new JButton("ENTER");
@@ -59,11 +61,13 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
        ERRORsField.setEditable(false);
        
        CalcWindow.getContentPane().add(labelPanel, "North");
-       labelPanel.setLayout(new GridLayout(2,3)); // 1 row, 2 cols
+       labelPanel.setLayout(new GridLayout(3,3)); // 3 row, 3 cols
        labelPanel.add(QuestionLabel);
        labelPanel.add(QuestionField);    
        labelPanel.add(XLabel);
        labelPanel.add(XField);
+       labelPanel.add(IncXLabel);
+       labelPanel.add(IncXField);
 
        CalcWindow.setTitle("EX: CACLULATOR"); // show chatName in title bar
        //AnswerArea.setEditable(false);
@@ -178,6 +182,23 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 			index++;
 		}
 		return vals;
+	}
+	
+	public void NewGraph (void){
+		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
+		JPanel graphPanel			= new JPanel();
+		Graphics g;
+		
+		graphWindow.setLocation(500,0); 									// x,y
+		graphWindow.setSize(500, 200);  									// width, height 
+		g = graphPanel.getGraphics();
+		JFrame.setTitle(QuestionField.getText());			//title must be the expression graphed.
+		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
+		
+		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
+		graphWindow.setVisible(true); 
+		
+		getValues();
 	}
 	
 	public ArrayList<String> stringParser(String expression) throws Exception {
@@ -749,24 +770,4 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public void NewGraph () implement MouseListener{
-		JFrame graphWindow			= new JFrame();						//window to pop up after hitting enter
-		JPanel graphPanel			= new JPanel();
-		Graphics g;
-		
-		graphWindow.setLocation(500,0); 									// x,y
-		graphWindow.setSize(500, 200);  									// width, height 
-		g = graphPanel.getGraphics();
-		JFrame.setTitle(QuestionField.getText());			//title must be the expression graphed.
-		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
-		
-		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
-		graphWindow.setVisible(true); 
-		
-		
-		
-	}
-
-
 }
