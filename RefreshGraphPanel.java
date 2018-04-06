@@ -85,9 +85,13 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
         for(int i = 0;i<xTickPix.length;i++){
             g.drawLine((int)xTickPix[i],windowHeight/2-5,(int)xTickPix[i],windowHeight/2+5);
         }
-        //System.out.println(xTickPix[0][0]);
-        for(int i = 0;i<xTickPix.length;i++){
-        System.out.println(xTickPix[i]);}
+        
+        g.setColor(Color.black);
+      
+        for(int i = 0;i<coordinates[0].length;i++){
+            g.drawOval((int)coordinates[0][i],(int)coordinates[1][i],2,2);
+            System.out.println("x = " + coordinates[0][i] + " y = " + coordinates[1][i]);
+        }
 
 	}
 
@@ -119,8 +123,9 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		for(int m = 0; m < xComponents.length; m++){
 			if(xComponents[m] < 0) coordinates[0][m] = windowWidth/2 - xinterval*m;
 			else coordinates[0][m] = windowWidth/2 + xinterval*m;
-			if(yComponents[m] < 0) coordinates[1][m] = windowHeight/2 + (yComponents[m]-yMin)*yConv + yMin;
-			else coordinates[1][m] = windowHeight/2 - (yComponents[m]-yMin)*yConv - yMin;
+			if(yComponents[m] < 0) coordinates[1][m] = windowHeight/2 + (Math.abs(yComponents[m])-yMin)/(yConv*10);
+			else coordinates[1][m] = windowHeight/2 - (Math.abs(yComponents[m])-yMin)/(yConv*10);
+			//coordinates[1][m] = windowHeight/2 - (yConv*(yComponents[m]-yMin)/10);
 		}
 		return coordinates;
 	}
