@@ -1,7 +1,9 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,8 +17,10 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	GraphingCalculator calculator;
 	String expr;
-	String[] xComponents = new String[10];
-	String[] yComponents;
+	double[] xComponents = new double[11];
+	double[] yTicks = new double[11];
+	double[] yComponents;
+	double yMax, yMin, yInterval; 
 	int windowWidth;
 	int windowHeight;
 	
@@ -24,9 +28,9 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
 		expr = expression;
-		double yMin = min(yValues);
-		double yMax = max(yValues);
-		this.addMouseListener(this);
+		yMin = min(yValues);
+		yMax = max(yValues);
+		double yRange = Math.abs(yMax-yMin);
 		
 		JFrame xyWindow = new JFrame();
 		JPanel xPanel = new JPanel();
@@ -39,163 +43,118 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		yPanel.add(yTextField);
 		
 		// get x print scale values
-		System.out.print("X values: ");
-		for(int j = 0; j < 10; j++){
-			xComponents[j] = Double.toString(xValues[j]);
-			System.out.print(xComponents[j] + " ");
+		xComponents = Arrays.copyOf(xValues, xValues.length);
+		yComponents = Arrays.copyOf(yValues, yValues.length);
+		
+		for(int j = 0; j < xComponents.length; j++){
 		}
 		
+		// get y scale
+		if(yRange >= 10) yInterval = yRange/10;
+		
+		// handle ranges less than 10
+		else {
+			yInterval = 0.025;
+			double normInterval = yRange/10;
+			for(int j = 2; j < 40; j++){
+				if(Math.abs(normInterval - j*0.025)< Math.abs(normInterval - yInterval)) yInterval = j*0.025;
+			}
+		}
+		
+		// get y-ticks
+		for(int k = 0; k < 11; k++){
+			yTicks[k] = yMin+yInterval*k;
+			System.out.print("yTicks: " + yTicks[k] + '\n');
+		}
+//		yComponents = new double[yTicks.length];
+//		yComponents = Arrays.copyOf(yTicks, yTicks.length);
 	
-		int index = 0;
-		// get y scale 
-		double yscale = yScale(yMin, yMax)[0]/(yScale(yMin, yMax)[1]-1);
-		yComponents = new String[(int) yScale(yMin, yMax)[1]];
-		System.out.println("yMin: " + yMin);
-		System.out.println("yMax: " + yMax);
-		System.out.println("Scale: " +yscale);
-		System.out.print('\n' + "y values: ");
-		
-		// get y print scale values
-		for(double m = yMin; m <= yMax; m += yscale){
-			yComponents[index] = Double.toString(m);
-			System.out.print(yComponents[index] + " ");
-			index++;
-		}
-		
+		this.addMouseListener(this);
 	}
 	
 	@Override
 	public void paint(Graphics g) { // overrides paint() in JPanel 
 		windowHeight = getHeight();
 		windowWidth = getWidth();
-		double xPixelInterval = (windowWidth)/(10-1);
-		double yPixelInterval = (windowHeight)/(10-1);
-		double xValueToPixelConversionFactor = xPixelInterval/(Double.parseDouble(xComponents[1]) - Double.parseDouble(xComponents[0]));
-		double yValueToPixelConversionFactor = yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
-		System.out.println('\n' + "Current graph size is " + windowWidth + " x " + windowHeight);
+		double xPixelInterval = (windowWidth)/(10);
+		double yPixelInterval = (windowHeight)/(10);
+		double xValueToPixelConversionFactor = xPixelInterval/((xComponents[1]) - (xComponents[0]));
+		double yValueToPixelConversionFactor = yPixelInterval/yInterval;
 		
 		// get x-pixel values
-		int[][] xTickPix = getPixelVals(xPixelInterval, xComponents, windowWidth/2);
-		int[][] yTickPix = getPixelVals(yPixelInterval, yComponents, windowHeight/2);
-		
+		double xTickPix[] = getxPixelVals(xPixelInterval, xComponents);
+		double yTickPix[] = getyPixelVals(yPixelInterval, yTicks);
+		double coordinates[][] = plotPoints(yValueToPixelConversionFactor, xPixelInterval, yTickPix);
+        
+		//Draw axis and scales first
+        g.setColor(Color.blue);
+        g.drawLine(0,windowHeight/2,windowWidth,windowHeight/2);
+        
+        g.drawLine(windowWidth/2,0,windowWidth/2,windowHeight);
+        for(int i = 0;i<yTickPix.length;i++){
+            g.drawLine(windowWidth/2-5,(int)yTickPix[i],windowWidth/2+5,(int)yTickPix[i]);
+        }
+        for(int i = 0;i<xTickPix.length;i++){
+            g.drawLine((int)xTickPix[i],windowHeight/2-5,(int)xTickPix[i],windowHeight/2+5);
+        }
+        
+        g.setColor(Color.black);
+      
+        for(int i = 0;i<coordinates[0].length;i++){
+            g.drawOval((int)coordinates[0][i],(int)coordinates[1][i],2,2);
+            System.out.println("x = " + coordinates[0][i] + " y = " + coordinates[1][i]);
+        }
+
 	}
-	
-	public int[][] getPixelVals(double interval, String[] values, int reference) {
+
+	public double[] getxPixelVals(double interval, double[] values) {
 		int index = 0;
-		int pixels[][] = new int[2][values.length];
+		double pixels[] = new double[values.length];
 		for(int i = 0; i < values.length*interval; i+= interval){
-			pixels[0][index] = (int)(interval*i+reference);
+			pixels[index] = (int)(i);
 			index++;
 		}
 		return pixels;
 	}
+		
+	public double[] getyPixelVals(double interval, double[] values) {
+		int index = 0;
+		
+		double pixels[] = new double[values.length];
+		System.out.println("value lenght: " + values.length + '\n' + "w/interval: " + values.length*interval);
+		for(int i = 0; i < values.length*interval; i+= interval){
+			pixels[index] = (int)(i); 
+			System.out.println("value index: " + index + " ," + i);
+			index++;
+			
+		}
+		return pixels;
+	}
 	
-	public double[] yScale(double yMin, double yMax){
-		double dPlotRange;
-		  int    plotRange, initialIncrement, upperIncrement, 
-		         lowerIncrement, selectedIncrement, numberOfYscaleValues,
-		         lowestYscaleValue, highestYscaleValue;
-		  String zeros = "0000000000";
-		  
-		  
-		  // 1) Determine the RANGE to be plotted.
-		  dPlotRange = yMax - yMin;
-		  System.out.println("Plot range (Ymax-Ymin) = " + dPlotRange);
-
-		  // 2) Determine an initial increment value.
-		  if (dPlotRange > 10)
-		     {
-			 plotRange = (int)dPlotRange;
-			 System.out.println("Rounded plot range = " + plotRange);
-		     }
-		  else
-		     {
-			 throw new IllegalArgumentException("Add handling of small plot range!");
-		     }
-		/*ASSUME*/ // 10 scale values as a starting assumption.
-		  initialIncrement = plotRange/10;
-		  System.out.println("Initial increment value = " + initialIncrement);
-		  // Please excuse this clumsy "math"!
-		  String initialIncrementString = String.valueOf(initialIncrement);
-		  //System.out.println("InitialIncrementString = " + initialIncrementString + " (length = " + initialIncrementString.length() + ")");
-
-		  // 3) Find even numbers above and below the initial increment. 
-		  String leadingDigit = initialIncrementString.substring(0,1);
-		  int leadingNumber = Integer.parseInt(leadingDigit);
-		  int bumpedLeadingNumber = leadingNumber + 1;
-		  String bumpedLeadingDigit = String.valueOf(bumpedLeadingNumber);
-		  String upperIncrementString = bumpedLeadingDigit + zeros.substring(0,initialIncrementString.length()-1);
-		  String lowerIncrementString = leadingDigit       + zeros.substring(0,initialIncrementString.length()-1);
-		  upperIncrement = Integer.parseInt(upperIncrementString);
-		  lowerIncrement = Integer.parseInt(lowerIncrementString);
-		  System.out.println("Upper increment alternative = " + upperIncrement);
-		  System.out.println("Lower increment alternative = " + lowerIncrement);
-
-		  // 4) Pick the upper or lower even increment depending on which is closest.
-		  int distanceToUpper = upperIncrement - initialIncrement;
-		  int distanceToLower = initialIncrement - lowerIncrement;
-		  if (distanceToUpper > distanceToLower)
-			  selectedIncrement = lowerIncrement;
-		    else
-		      selectedIncrement = upperIncrement;
-		  System.out.println("The closest even increment (and therefore the one chosen) = " + selectedIncrement);
-
-		  // 5) Determine lowest Y scale value
-		  numberOfYscaleValues = 0;
-		  lowestYscaleValue    = 0;
-		  if (yMin < 0)
-		     {
-		     for (; lowestYscaleValue > yMin; lowestYscaleValue-=selectedIncrement)
-		          numberOfYscaleValues++;
-		     }
-		  if (yMin > 0)
-		     {
-			 for (; lowestYscaleValue < yMin; lowestYscaleValue+=selectedIncrement)
-			      numberOfYscaleValues++;
-		     numberOfYscaleValues--;
-		     lowestYscaleValue -= selectedIncrement;
-		     }
-		  System.out.println("The lowest Y scale value will be " + lowestYscaleValue + ")");
-		  
-		  
-		  // 6) Determine upper Y scale value
-		  numberOfYscaleValues = 1;
-		  for (highestYscaleValue = lowestYscaleValue; highestYscaleValue < yMax; highestYscaleValue+=selectedIncrement)
-			  numberOfYscaleValues++;
-		  System.out.println("The highest Y scale value will be " + highestYscaleValue);
-		  System.out.println("The number of Y scale click marks will be " + numberOfYscaleValues);
-		  if ((numberOfYscaleValues < 5) || (numberOfYscaleValues > 20))
-		     {
-			 throw new IllegalArgumentException("Number of Y scale click marks is too few or too many!");
-		     }
-		  
-		  // 7) Determine if Y scale will be extended to include the 0 point.
-		  if ((lowestYscaleValue < 0) && (highestYscaleValue > 0))
-		       System.out.println("The Y scale includes the 0 point.");
-		    else // Y scale does not include 0.
-		     {   //	Should it be extended to include the 0 point?
-		     if ((lowestYscaleValue > 0) && (lowestYscaleValue/selectedIncrement <= 3))
-		        {
-		    	lowestYscaleValue = 0;
-		    	System.out.println("Lower Y scale value adjusted down to 0 to include 0 point. (Additional click marks added.)");
-		        }
-		     if ((highestYscaleValue < 0) && (highestYscaleValue/selectedIncrement <= 3))
-		        {
-		     	highestYscaleValue = 0;
-		    	System.out.println("Upper Y scale value adjusted up to 0 to include 0 point. (Additional click marks added.)");
-		        }
-		     }
-		  int yScaleValue = lowestYscaleValue;
-		  while(yScaleValue < highestYscaleValue)
-		       {
-			   System.out.print(yScaleValue + ",");
-			   yScaleValue += selectedIncrement;
-		       }
-		  System.out.println(yScaleValue);
-		  double retVal[] = {yScaleValue, numberOfYscaleValues};
-		  return retVal;
-	}      
-	
+	public double[][] plotPoints(double yConv, double xinterval, double[] yPixTix){ 
+		double coordinates[][] = new double[2][xComponents.length];
+		double yPixelPoint = 0;
+		for(int m = 0; m < xComponents.length; m++){
+			if(xComponents[m] < 0) coordinates[0][m] = windowWidth/2 - xinterval*m;
+			else coordinates[0][m] = windowWidth/2 + xinterval*m;
+			// step 1: get value tick range
+			for(int j = 0; j < yTicks.length-1; j++) {
+				if(yComponents[m] > yTicks[j] && yComponents[m] < yTicks[j+1]){
+					// step 2: find constant k distribution 
+					double k = yComponents[j]/yTicks[j+1];
+					// step 3: get pixel conversion
+					if(yComponents[m] >= 0) yPixelPoint = windowHeight/2 - k*yPixTix[j+1];
+					else yPixelPoint = windowHeight/2 - k*yPixTix[j+1];
+					System.out.print("yPixels: " + yPixelPoint + " ");
+				}
+				
+			}
+			coordinates[1][m] = yPixelPoint;
+			
+			
+		}
+		return coordinates;
+	}
 	
 	public double max(double[] values) {
 		double max = values[0];
