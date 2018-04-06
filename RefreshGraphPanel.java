@@ -27,9 +27,9 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
 		expr = expression;
-		yMin = max(yValues);
-		yMax = min(yValues);
-		double yRange = yMax-yMin;
+		yMin = min(yValues);
+		yMax = max(yValues);
+		double yRange = Math.abs(yMax-yMin);
 		
 		// get x print scale values
 		xComponents = Arrays.copyOf(xValues, xValues.length);
@@ -53,6 +53,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		// get y-ticks
 		for(int k = 0; k < 11; k++){
 			yTicks[k] = yMin+yInterval*k;
+			System.out.print("yTicks: " + yTicks[k] + '\n');
 		}
 //		yComponents = new double[yTicks.length];
 //		yComponents = Arrays.copyOf(yTicks, yTicks.length);
@@ -72,7 +73,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		// get x-pixel values
 		double xTickPix[] = getxPixelVals(xPixelInterval, xComponents);
 		double yTickPix[] = getyPixelVals(yPixelInterval, yTicks);
-		double coordinates[][] = plotPoints(yValueToPixelConversionFactor, xPixelInterval);
+		double coordinates[][] = plotPoints(yValueToPixelConversionFactor, xPixelInterval, yTickPix);
         
 		//Draw axis and scales first
         g.setColor(Color.blue);
@@ -107,6 +108,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		
 	public double[] getyPixelVals(double interval, double[] values) {
 		int index = 0;
+		
 		double pixels[] = new double[values.length];
 		System.out.println("value lenght: " + values.length + '\n' + "w/interval: " + values.length*interval);
 		for(int i = 0; i < values.length*interval; i+= interval){
@@ -118,14 +120,27 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		return pixels;
 	}
 	
-	public double[][] plotPoints(double yConv, double xinterval){ 
+	public double[][] plotPoints(double yConv, double xinterval, double[] yPixTix){ 
 		double coordinates[][] = new double[2][xComponents.length];
+		double yPixelPoint = 0;
 		for(int m = 0; m < xComponents.length; m++){
 			if(xComponents[m] < 0) coordinates[0][m] = windowWidth/2 - xinterval*m;
 			else coordinates[0][m] = windowWidth/2 + xinterval*m;
-			if(yComponents[m] < 0) coordinates[1][m] = windowHeight/2 + (Math.abs(yComponents[m])-yMin)/(yConv*10);
-			else coordinates[1][m] = windowHeight/2 - (Math.abs(yComponents[m])-yMin)/(yConv*10);
-			//coordinates[1][m] = windowHeight/2 - (yConv*(yComponents[m]-yMin)/10);
+			// step 1: get value tick range
+			for(int j = 0; j < yTicks.length-1; j++) {
+				if(yComponents[m] > yTicks[j] && yComponents[m] < yTicks[j+1]){
+					// step 2: find constant k distribution 
+					double k = yComponents[j]/yTicks[j+1];
+					// step 3: get pixel conversion
+					if(yComponents[m] >= 0) yPixelPoint = windowHeight/2 - k*yPixTix[j+1];
+					else yPixelPoint = windowHeight/2 - k*yPixTix[j+1];
+					System.out.print("yPixels: " + yPixelPoint + " ");
+				}
+				
+			}
+			coordinates[1][m] = yPixelPoint;
+			
+			
 		}
 		return coordinates;
 	}
