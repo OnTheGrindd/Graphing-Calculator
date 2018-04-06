@@ -148,6 +148,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
             ERRORsField.setText(" ");
             ERRORsField.setBackground(Color.white);   
             XField.setText(" ");
+            xIncField.setText(" ");
 		}
 		
 		if(e.getSource() == RecallButton){

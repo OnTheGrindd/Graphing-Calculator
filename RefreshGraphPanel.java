@@ -35,9 +35,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		xComponents = Arrays.copyOf(xValues, xValues.length);
 		yComponents = Arrays.copyOf(yValues, yValues.length);
 		
-		System.out.print("X values: ");
 		for(int j = 0; j < xComponents.length; j++){
-			System.out.print(xComponents[j] + " ");
 		}
 		
 		// get y scale
@@ -53,10 +51,8 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		}
 		
 		// get y-ticks
-		System.out.println("yTicks");
 		for(int k = 0; k < 11; k++){
 			yTicks[k] = yMin+yInterval*k;
-			System.out.print(yTicks[k] + " ");
 		}
 //		yComponents = new double[yTicks.length];
 //		yComponents = Arrays.copyOf(yTicks, yTicks.length);
@@ -72,7 +68,6 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		double yPixelInterval = (windowHeight)/(10);
 		double xValueToPixelConversionFactor = xPixelInterval/((xComponents[1]) - (xComponents[0]));
 		double yValueToPixelConversionFactor = yPixelInterval/yInterval;
-		System.out.println('\n' + "Current graph size is " + windowWidth + " x " + windowHeight);
 		
 		// get x-pixel values
 		double xTickPix[] = getxPixelVals(xPixelInterval, xComponents);
@@ -121,11 +116,11 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	
 	public double[][] plotPoints(double yConv, double xinterval){ 
 		double coordinates[][] = new double[2][xComponents.length];
-		for(int m = 0; m< xComponents.length; m++){
+		for(int m = 0; m < xComponents.length; m++){
 			if(xComponents[m] < 0) coordinates[0][m] = windowWidth/2 - xinterval*m;
 			else coordinates[0][m] = windowWidth/2 + xinterval*m;
-			if(yComponents[m] < 0) coordinates[1][m] = windowHeight/2 + (yComponents[m]-yMin)*yConv;
-			else coordinates[1][m] = windowHeight/2 - (yComponents[m]-yMin)*yConv;
+			if(yComponents[m] < 0) coordinates[1][m] = windowHeight/2 + (yComponents[m]-yMin)*yConv + yMin;
+			else coordinates[1][m] = windowHeight/2 - (yComponents[m]-yMin)*yConv - yMin;
 		}
 		return coordinates;
 	}
