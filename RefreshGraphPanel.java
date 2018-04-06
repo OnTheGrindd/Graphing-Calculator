@@ -22,7 +22,6 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	public RefreshGraphPanel(GraphingCalculator gc, String expression, double[] xValues, double[] yValues) throws IllegalArgumentException {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
-		Graphics gr = this.getGraphics();
 		expr = expression;
 		double yMin = min(yValues);
 		double yMax = max(yValues);
@@ -58,15 +57,26 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	public void paint(Graphics g) { // overrides paint() in JPanel 
 		windowHeight = getHeight();
 		windowWidth = getWidth();
-		int xmargin = 50;
-		double ymargin = 20;
-		double xPixelInterval = (windowWidth - 2*xmargin)/(10-1);
-		double yPixelInterval = (windowHeight - 2*ymargin)/(10-1);
+		double xPixelInterval = (windowWidth)/(10-1);
+		double yPixelInterval = (windowHeight)/(10-1);
 		double xValueToPixelConversionFactor = xPixelInterval/(Double.parseDouble(xComponents[1]) - Double.parseDouble(xComponents[0]));
-		double yValueToPixelConversionFactor = windowHeight - yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
+		double yValueToPixelConversionFactor = yPixelInterval/(Double.parseDouble(yComponents[1]) - Double.parseDouble(xComponents[0]));
 		System.out.println('\n' + "Current graph size is " + windowWidth + " x " + windowHeight);
 		
+		// get x-pixel values
+		int[][] xTickPix = getPixelVals(xPixelInterval, xComponents, windowWidth/2);
+		int[][] yTickPix = getPixelVals(yPixelInterval, yComponents, windowHeight/2);
 		
+	}
+	
+	public int[][] getPixelVals(double interval, String[] values, int reference) {
+		int index = 0;
+		int pixels[][] = new int[2][values.length];
+		for(int i = 0; i < values.length*interval; i+= interval){
+			pixels[0][index] = (int)(interval*i+reference);
+			index++;
+		}
+		return pixels;
 	}
 	
 	public double[] yScale(double yMin, double yMax){
