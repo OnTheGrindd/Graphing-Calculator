@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 public class RefreshGraphPanel extends JPanel implements MouseListener {
@@ -85,12 +86,21 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		double xTickPix[] = getxPixelVals(xPixelInterval, xComponents);
 		double yTickPix[] = getyPixelVals(yPixelInterval, yTicks);
 		double coordinates[][] = plotPoints(yValueToPixelConversionFactor, xPixelInterval, yTickPix);
+		int hOffset = getAxisOffset(yComponents);
+		int vOffset = getAxisOffset(xComponents);
+		// get horizontal offset
+		if (getAxisOffset(xComponents) < 0) vOffset = -1*getAxisOffset(xComponents);
+		
         
 		//Draw axis and scales first
-        g.setColor(Color.blue);
-        g.drawLine(0,windowHeight/2,windowWidth,windowHeight/2);
+        g.setColor(Color.green);
+        // x axis
+        g.drawLine(0,windowHeight/2 + hOffset*(int)yPixelInterval,windowWidth,windowHeight/2+ hOffset*(int)yPixelInterval);
         
-        g.drawLine(windowWidth/2,0,windowWidth/2,windowHeight);
+        // y axis
+        g.drawLine(windowWidth/2+vOffset*(int)xPixelInterval,0,windowWidth/2+vOffset*(int)xPixelInterval,windowHeight);
+        
+        // tick marks
         for(int i = 0;i<yTickPix.length;i++){
             g.drawLine(windowWidth/2-5,(int)yTickPix[i],windowWidth/2+5,(int)yTickPix[i]);
         }
@@ -105,6 +115,23 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
             System.out.println("x = " + coordinates[0][i] + " y = " + coordinates[1][i]);
         }
 
+	}
+	
+	public int getAxisOffset(double[] values){
+		int pCounter = 0;
+		int nCounter = 0;
+		int offset = 0;
+		
+		// xOffset calculation
+		for(int i = 0; i < values.length; i++){
+			if(values[i] < 0) nCounter++;
+			else pCounter++;
+		}
+		offset = pCounter - nCounter;
+		if(offset < 0) offset = offset -1;
+		else offset = offset+1;
+		
+		return offset;
 	}
 
 	public double[] getxPixelVals(double interval, double[] values) {
