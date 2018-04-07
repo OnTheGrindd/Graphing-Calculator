@@ -24,6 +24,17 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 	int windowWidth;
 	int windowHeight;
 	
+	JFrame xyWindow = new JFrame();
+	JPanel xPanel = new JPanel();
+	JPanel yPanel = new JPanel();
+	JTextField xTextField = new JTextField();
+	JTextField yTextField = new JTextField();
+	xyWindow.getContentPane().add(xPanel, "Left");
+	xyWindow.getContentPane().add(yPanel, "Right");
+	xPanel.add(xTextField);
+	yPanel.add(yTextField);
+	
+	
 	public RefreshGraphPanel(GraphingCalculator gc, String expression, double[] xValues, double[] yValues) throws IllegalArgumentException {
 		// TODO Auto-generated constructor stub
 		calculator = gc;
@@ -32,15 +43,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		yMax = max(yValues);
 		double yRange = Math.abs(yMax-yMin);
 		
-		JFrame xyWindow = new JFrame();
-		JPanel xPanel = new JPanel();
-		JPanel yPanel = new JPanel();
-		JTextField xTextField = new JTextField();
-		JTextField yTextField = new JTextField();
-		xyWindow.getContentPane().add(xPanel, "Left");
-		xyWindow.getContentPane().add(yPanel, "Right");
-		xPanel.add(xTextField);
-		yPanel.add(yTextField);
+		
 		
 		// get x print scale values
 		xComponents = Arrays.copyOf(xValues, xValues.length);
@@ -104,7 +107,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
             g.drawOval((int)coordinates[0][i],(int)coordinates[1][i],2,2);
             System.out.println("x = " + coordinates[0][i] + " y = " + coordinates[1][i]);
         }
-
+        connectDots(g, coordinates);
 	}
 
 	public double[] getxPixelVals(double interval, double[] values) {
@@ -155,6 +158,18 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 		}
 		return coordinates;
 	}
+	
+	
+	public void connectDots(Graphics gr, double[][] coordinates) {
+		gr.setColor(Color.green);
+		for(int i=0; i <= 11; i++) {
+			gr.drawLine(coordinates[0][i], coordinates[0][i+1]);
+		}
+		for(int j=0; j <= 11; j++0) {
+			gr.drawLine(coordinates[1][j], coordinates[1][j+1]);	
+		}
+	}
+	
 	
 	public double max(double[] values) {
 		double max = values[0];

@@ -163,9 +163,19 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 				}
 				QuestionField.setText(QuestionArea.getText(start, end - start));
 			} catch (BadLocationException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+		}
+		
+		try {
+			int IncVal = Integer.parseInt(IncXField.getText());
+			if(IncVal < 0) {
+				ERRORsField.setText("x increment cannot be negative");
+				ERRORsField.setBackground(Color.pink);
+			}
+		}
+		catch(NumberFormatException nfe) {
+			ERRORsField.setText("Invalid number. Enter positive decimal number.");
 		}
 		
 	}
