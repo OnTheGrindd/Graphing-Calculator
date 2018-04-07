@@ -152,9 +152,7 @@ public class RefreshGraphPanel extends JPanel implements MouseListener {
 				}
 				
 			}
-			coordinates[1][m] = yPixelPoint;
-			
-			
+			coordinates[1][m] = yPixelPoint;	
 		}
 		return coordinates;
 	}

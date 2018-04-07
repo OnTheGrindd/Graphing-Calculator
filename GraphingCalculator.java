@@ -774,7 +774,7 @@ public class GraphingCalculator implements Calculator, ActionListener, KeyListen
 		
 		graphWindow.setLocation(500,0); 									// x,y
 		graphWindow.setSize(500, 200);  									// width, height 
-		graphWindow.setTitle("Click On A Point To See The X & Y Values");//title must be the expression graphed.
+		graphWindow.setTitle(QuestionField.getText() + " Click On A Point To See X & Y Values");			//title must be the expression graphed.
 		graphWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	//given to us in part 3 of instructions.
 		RefreshGraphPanel graphPanel = new RefreshGraphPanel(this, QuestionField.getText(), getValues(XField.getText(), xIncField.getText())[0], getValues(XField.getText(), xIncField.getText())[1]);		
 		graphWindow.getContentPane().add(graphPanel,  "Center");			//centers the graph panel in the window (step 4)
